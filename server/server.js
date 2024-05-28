@@ -17,9 +17,9 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
 // Model ve Routerler
-const authRouter = require("./server/routes/auth")
-const maasRouter = require("./server/routes/maas")
-const harcamaRouter = require("./server/routes/harcama")
+const authRouter = require("./routes/auth")
+const maasRouter = require("./routes/maas")
+const harcamaRouter = require("./routes/harcama")
 
 app.use(cors())
 app.use("/api/auth", authRouter)
