@@ -6,7 +6,7 @@ const MaasSchema = new mongoose.Schema({
   aciklama: String,
   kullanim: {
     type: Number,
-    enum: [0, 1, 2], // 0: İhtiyaç, 1: Yatırım, 2: Lüks
+    enum: [0, 1, 2, 3], // 0: İhtiyaç, 1: Yatırım, 2: Lüks
   },
   miktar: Number,
   user: {
