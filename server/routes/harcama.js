@@ -3,7 +3,7 @@
 const express = require("express")
 const router = express.Router()
 const jwt = require("jsonwebtoken")
-const UserHarcamalar = require("../models/UserHarcamalar")
+const Harcama = require("../models/Harcama")
 const User = require("../models/User")
 
 // Middleware: JWT doğrulama
@@ -23,20 +23,15 @@ router.post("/", verifyToken, async (req, res) => {
     const { aciklama, kullanim, miktar } = req.body
     const user = await User.findOne({ email: req.user.email })
 
-    let userHarcamalar = await UserHarcamalar.findOne({ user: user._id })
-    if (!userHarcamalar) {
-      userHarcamalar = new UserHarcamalar({ user: user._id, harcamalar: [] })
-    }
+    const newMaas = new Harcama({
+      aciklama,
+      kullanim,
+      miktar,
+      user: user._id,
+    })
 
-    // userHarcamalar.harcamalar.push({ aciklama, kullanim, miktar })
-    userHarcamalar.harcamalar = Array.isArray(userHarcamalar.harcamalar)
-      ? userHarcamalar.harcamalar
-      : []
-    userHarcamalar.harcamalar.push({ aciklama, kullanim, miktar })
-
-    await userHarcamalar.save()
-
-    res.status(201).json(userHarcamalar)
+    await newMaas.save()
+    res.status(201).json(newMaas)
   } catch (error) {
     console.error("Error saving data:", error)
     res.status(500).json({ error: "Failed to save the data" })
@@ -47,41 +42,23 @@ router.post("/", verifyToken, async (req, res) => {
 router.get("/", verifyToken, async (req, res) => {
   try {
     const user = await User.findOne({ email: req.user.email })
-    const userHarcamalar = await UserHarcamalar.findOne({ user: user._id })
-
-    if (!userHarcamalar) {
-      return res
-        .status(404)
-        .json({ message: "No expenses found for this user" })
-    }
-
-    res.status(200).json(userHarcamalar)
+    const harcamalar = await Harcama.find({ user: user._id })
+    res.status(200).json(harcamalar)
   } catch (err) {
     res.status(500).send({ message: err.message })
   }
 })
 
 // Harcama sil
-router.delete("/:harcamaId", verifyToken, async (req, res) => {
-  const { harcamaId } = req.params
+router.delete("/:id", async (req, res) => {
+  const { id } = req.params
 
   try {
-    const user = await User.findOne({ email: req.user.email })
-    const userHarcamalar = await UserHarcamalar.findOne({ user: user._id })
+    const harcama = await Harcama.findByIdAndDelete(id)
 
-    if (!userHarcamalar) {
-      return res
-        .status(404)
-        .json({ message: "No expenses found for this user" })
-    }
-
-    const harcama = userHarcamalar.harcamalar.id(harcamaId)
     if (!harcama) {
-      return res.status(404).json({ message: "Expense not found" })
+      return res.status(404).json({ message: "Harcama bulunamadı" })
     }
-
-    harcama.remove()
-    await userHarcamalar.save()
 
     res.status(204).end()
   } catch (error) {
@@ -90,32 +67,22 @@ router.delete("/:harcamaId", verifyToken, async (req, res) => {
 })
 
 // Harcama düzenle
-router.put("/:harcamaId", verifyToken, async (req, res) => {
-  const { harcamaId } = req.params
+router.put("/:id", async (req, res) => {
+  const { id } = req.params
   const { aciklama, kullanim, miktar } = req.body
 
   try {
-    const user = await User.findOne({ email: req.user.email })
-    const userHarcamalar = await UserHarcamalar.findOne({ user: user._id })
+    const updatedHarcama = await Harcama.findByIdAndUpdate(
+      id,
+      { aciklama, kullanim, miktar },
+      { new: true }
+    )
 
-    if (!userHarcamalar) {
-      return res
-        .status(404)
-        .json({ message: "No expenses found for this user" })
+    if (!updatedHarcama) {
+      return res.status(404).json({ message: "Harcama düzenlenemedi" })
     }
 
-    const harcama = userHarcamalar.harcamalar.id(harcamaId)
-    if (!harcama) {
-      return res.status(404).json({ message: "Expense not found" })
-    }
-
-    harcama.aciklama = aciklama
-    harcama.kullanim = kullanim
-    harcama.miktar = miktar
-
-    await userHarcamalar.save()
-
-    res.json(userHarcamalar)
+    res.json(updatedHarcama)
   } catch (error) {
     res.status(500).json({ message: error.message })
   }
