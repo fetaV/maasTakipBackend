@@ -3,7 +3,7 @@
 const express = require("express")
 const router = express.Router()
 const jwt = require("jsonwebtoken")
-const UserHarcamalar = require("../models/UserHarcamalar")
+const UserHarcamalar = require("../models/Harcama")
 const User = require("../models/User")
 
 // Middleware: JWT doğrulama
