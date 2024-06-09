@@ -28,7 +28,12 @@ router.post("/", verifyToken, async (req, res) => {
       userHarcamalar = new UserHarcamalar({ user: user._id, harcamalar: [] })
     }
 
+    // userHarcamalar.harcamalar.push({ aciklama, kullanim, miktar })
+    userHarcamalar.harcamalar = Array.isArray(userHarcamalar.harcamalar)
+      ? userHarcamalar.harcamalar
+      : []
     userHarcamalar.harcamalar.push({ aciklama, kullanim, miktar })
+
     await userHarcamalar.save()
 
     res.status(201).json(userHarcamalar)

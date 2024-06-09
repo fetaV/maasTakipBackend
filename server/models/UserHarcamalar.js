@@ -1,3 +1,5 @@
+// server/models/UserHarcamalar.js
+
 const mongoose = require("mongoose")
 
 const HarcamaSchema = new mongoose.Schema(
