@@ -1,6 +1,4 @@
 const mongoose = require("mongoose")
-const express = require("express")
-const router = express.Router()
 
 const HarcamaSchema = new mongoose.Schema(
   {
@@ -27,4 +25,4 @@ const UserHarcamalarSchema = new mongoose.Schema(
   { timestamps: true }
 )
 
-const UserHarcamalar = mongoose.model("UserHarcamalar", UserHarcamalarSchema)
+module.exports = mongoose.model("UserHarcamalar", UserHarcamalarSchema)
