@@ -54,7 +54,6 @@ router.get("/", verifyToken, async (req, res) => {
   }
 })
 
-// Harcama sil
 router.delete("/:harcamaId", verifyToken, async (req, res) => {
   const { harcamaId } = req.params
 
@@ -68,14 +67,14 @@ router.delete("/:harcamaId", verifyToken, async (req, res) => {
         .json({ message: "No expenses found for this user" })
     }
 
-    console.log("userHarcamalar:", userHarcamalar)
-
-    const harcama = userHarcamalar.harcamalar.id(harcamaId)
-    if (!harcama) {
+    const harcamaIndex = userHarcamalar.harcamalar.findIndex(
+      h => h._id === harcamaId
+    )
+    if (harcamaIndex === -1) {
       return res.status(404).json({ message: "Expense not found" })
     }
 
-    await harcama.remove()
+    userHarcamalar.harcamalar.pull(harcamaId)
     await userHarcamalar.save()
 
     res.status(204).end()
@@ -84,6 +83,8 @@ router.delete("/:harcamaId", verifyToken, async (req, res) => {
     res.status(500).json({ message: error.message })
   }
 })
+
+module.exports = router
 
 // Harcama düzenle
 router.put("/:harcamaId", verifyToken, async (req, res) => {
