@@ -68,18 +68,19 @@ router.delete("/:harcamaId", verifyToken, async (req, res) => {
         .json({ message: "No expenses found for this user" })
     }
 
-    const harcamaIndex = userHarcamalar.harcamalar.findIndex(
-      harcama => harcama._id.toString() === harcamaId
-    )
-    if (harcamaIndex === -1) {
+    console.log("userHarcamalar:", userHarcamalar)
+
+    const harcama = userHarcamalar.harcamalar.id(harcamaId)
+    if (!harcama) {
       return res.status(404).json({ message: "Expense not found" })
     }
 
-    userHarcamalar.harcamalar.splice(harcamaIndex, 1)
+    harcama.remove()
     await userHarcamalar.save()
 
     res.status(204).end()
   } catch (error) {
+    console.error("Error deleting the expense:", error)
     res.status(500).json({ message: error.message })
   }
 })
