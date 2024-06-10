@@ -70,7 +70,8 @@ router.delete("/:harcamaId", verifyToken, async (req, res) => {
 
     console.log("userHarcamalar:", userHarcamalar)
 
-    userHarcamalar.harcamalar.id(harcamaId).remove()
+    // Harcamayı diziden çıkar
+    userHarcamalar.harcamalar.pull({ _id: harcamaId })
     await userHarcamalar.save()
 
     res.status(204).end()
