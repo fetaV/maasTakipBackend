@@ -48,7 +48,7 @@ router.get("/", verifyToken, async (req, res) => {
         .json({ message: "No expenses found for this user" })
     }
 
-    res.status(200).json({ harcamalar: userHarcamalar.harcamalar })
+    res.status(200).json(userHarcamalar)
   } catch (err) {
     res.status(500).send({ message: err.message })
   }
@@ -70,12 +70,7 @@ router.delete("/:harcamaId", verifyToken, async (req, res) => {
 
     console.log("userHarcamalar:", userHarcamalar)
 
-    const harcama = userHarcamalar.harcamalar.id(harcamaId)
-    if (!harcama) {
-      return res.status(404).json({ message: "Expense not found" })
-    }
-
-    harcama.remove()
+    userHarcamalar.harcamalar.id(harcamaId).remove()
     await userHarcamalar.save()
 
     res.status(204).end()
