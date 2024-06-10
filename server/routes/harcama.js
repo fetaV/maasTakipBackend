@@ -75,7 +75,7 @@ router.delete("/:harcamaId", verifyToken, async (req, res) => {
       return res.status(404).json({ message: "Expense not found" })
     }
 
-    harcama.remove()
+    await harcama.remove()
     await userHarcamalar.save()
 
     res.status(204).end()
