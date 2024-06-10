@@ -48,7 +48,7 @@ router.get("/", verifyToken, async (req, res) => {
         .json({ message: "No expenses found for this user" })
     }
 
-    res.status(200).json(userHarcamalar)
+    res.status(200).json({ harcamalar: userHarcamalar.harcamalar })
   } catch (err) {
     res.status(500).send({ message: err.message })
   }
